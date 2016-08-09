@@ -26,7 +26,15 @@
         <tr>
           <td class="align-center"><%= gift_card.formatted_redemption_code %></td>
           <td class="align-center"><%= number_to_currency(gift_card.amount) %></td>
-          <td class="align-center"><%= link_to "#{gift_card.purchaser.email}", edit_admin_user_path(gift_card.purchaser) %></td>
+          <td class="align-center">
+          <%=
+            if gift_card.purchaser.present?
+              link_to "#{gift_card.purchaser_email}", edit_admin_user_path(gift_card.purchaser)
+            else
+              gift_card.purchaser_email
+            end
+          %>
+          </td>
           <td class="align-center"><%= gift_card.formatted_created_at %></td>
           <td class="align-center"><%= gift_card.recipient_email %></td>
           <td class="align-center"><%= gift_card.formatted_sent_at || gift_card.formatted_send_email_at %></td>

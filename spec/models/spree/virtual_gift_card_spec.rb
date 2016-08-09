@@ -19,6 +19,24 @@ describe Spree::VirtualGiftCard do
     end
   end
 
+  describe "#purchaser_email" do
+    let(:gift_card) { build(:virtual_gift_card) }
+    subject { gift_card.purchaser_email }
+    let(:gift_card) { create(:virtual_gift_card, purchaser: order.user, line_item: order.line_items.first) }
+
+    context "as guest account" do
+      let(:order) { create(:order_with_line_items, line_items_count: 1, user: nil, email: "test@example.com") }
+
+      it { expect(subject).to  eql "test@example.com" }
+    end
+
+    context "as User" do
+      let(:order) { create(:order_with_line_items, line_items_count: 1) }
+
+      it { expect(subject).to  eql order.user.email }
+    end
+  end
+
   describe "#can_deactivate?" do
     subject { gift_card.can_deactivate? }
 

@@ -10,7 +10,6 @@ class Spree::VirtualGiftCard < ActiveRecord::Base
 
   validates :amount, numericality: { greater_than: 0 }
   validates_uniqueness_of :redemption_code, conditions: -> { where(redeemed_at: nil, redeemable: true) }
-  validates_presence_of :purchaser_id, if: Proc.new { |gc| gc.redeemable? }
 
   scope :unredeemed, -> { where(redeemed_at: nil) }
   scope :by_redemption_code, -> (redemption_code) { where(redemption_code: redemption_code) }
@@ -111,6 +110,10 @@ class Spree::VirtualGiftCard < ActiveRecord::Base
   def send_email
     Spree::GiftCardMailer.gift_card_email(self).deliver_later
     update_attributes!(sent_at: DateTime.now)
+  end
+
+  def purchaser_email
+    try(:purchaser).try(:email) || line_item.order.email
   end
 
   private
